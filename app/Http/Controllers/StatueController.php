@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StatueRequest;
 use App\Models\Statue;
 use Illuminate\Http\Request;
 
@@ -34,12 +35,14 @@ class StatueController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StatueRequest $request)
     {
         $adatok = $request->only(['person', 'height', 'price']);
+
         $statue = new Statue();
         $statue->fill($adatok);
         $statue->save();
+
         return redirect()->route('statues.index');
     }
 
@@ -62,7 +65,7 @@ class StatueController extends Controller
      */
     public function edit(Statue $statue)
     {
-        //
+        return view('statues.edit', ['statue' => $statue]);
     }
 
     /**
@@ -74,7 +77,11 @@ class StatueController extends Controller
      */
     public function update(Request $request, Statue $statue)
     {
-        //
+        $adatok = $request->only(['person', 'height', 'price']);
+        $statue->fill($adatok);
+        $statue->save();
+
+        return redirect()->route('statues.show', $statue->id);
     }
 
     /**
@@ -85,6 +92,7 @@ class StatueController extends Controller
      */
     public function destroy(Statue $statue)
     {
-        //
+        $statue->delete();
+        return redirect()->route('statues.index');
     }
 }
